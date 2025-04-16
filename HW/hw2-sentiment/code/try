@@ -1,0 +1,51 @@
+Loss = max { 1 - w.phi(x)y, 0}
+Gradient = -phi(x)y if (1-phi(x).w > 1 else 0
+
+w = w - 0.1 Gradient(x,y,w)
+[bad good not]
+x        y    w.phi(x)        w.phi(x)y [1 - w.phi(x)y] -phi(x)y  Gradient      new_w
+[1 0 0] -1 [0 0 0][1 0 0]=0    0 *-1       1            [1 0 0]  [1 0 0]    [0 0 0] - 0.1[1 0 0]
+                                                                            [-0.1 0 0]
+[0 1 0]  1 [-0.1 0 0][0 1 0]=0  0* 1       1            [0 -1 0] [0 -1 0]   [-0.1 0 0] - 0.1[0 -1 0]
+                                                                            [-0.1 0.1 0]
+[1 0 1]  1 [-.1 .1 0][1 0 1]=-.1 -.1       1.1          [-1 0 -1] [-1 0 -1] [-0.1 0.1 0] -0.1[-1 0 -1]
+                                                                            [0 0.1 0.1]
+[0 1 1] -1 [0 0.1 0.1] [0 1 1]=0.2  0.2*-1 1.2          [0 1 1]   [0 1 1]   [0 0.1 0.1] - 0.1[0 1 1]
+                                                                            [0 0 0]
+
+new-w = [-0.1  0.   0. ], F(w) = 1.0, gradientF = [1 0 0]
+new-w = [-0.1  0.1  0. ], F(w) = 1.0, gradientF = [ 0 -1  0]
+new-w = [0.    0.1  0.1], F(w) = 1.1, gradientF = [-1  0 -1]
+new-w = [0.    0.   0.], F(w) = 1.2, gradientF = [0 1 1]
+
+
+what is margin
+(w · φ(x)) (w · φ(x))y
+                 y    score     margin
+[a b c][1 0 0]  -1     a         -a
+[a b c][0 1 0]  1      b          b
+[a b c][1 0 1]  1      b+c        a+c
+
+fw(x) = sign(w · ϕ(x))
+fw(x_1) = sign(w.[1 0 0]) -1
+fw(x_2) = sign(w.[0 1 0]) 1
+fw(x_3) = sign(w.[1 0 0]) 1
+
+We get zero error when y - f(x) = 0
+
+Prove that no linear classifier using features of word counts (mapping each word to the
+number of occurrences of that word in the review) can get zero error on this dataset.
+Remember that this is a question about classifiers, not optimization algorithms; your
+proof should be true for any linear classifier of the form fw(x) = sign(w · ϕ(x)),
+regardless of how the weights are learned.
+Propose a single additional feature for your dataset that we could augment the feature
+vector with that would fix this problem.
+
+Intuition from the dataset is a word appears in 2 different examples for different value of Y. without looking at the previous word,
+Lets try to prove this in terms of score and margin.
+- lets say for some weight w, the score for first input be S_x1. Since y is -1, then S_x1 should be -ve so that we get postive margin M_x1
+
+- Similarly, for second input to be classified correctly, since y is +1, S_x2 > 0 for M_x2 +ve.
+- Now for third input, y = 1, so we want S_x3 > 1 for correct classification (M_x3 > 0).
+But we have same word occuring in first and third input, we get different signs of score.
+
