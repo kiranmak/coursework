@@ -33,26 +33,32 @@ class ShortestPathProblem(SearchProblem):
         self.startLocation = startLocation
         self.endTag = endTag
         self.cityMap = cityMap
+        self.endLocation = locationFromTag(self.endTag, self.cityMap)
 
     def startState(self) -> State:
         # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
-        raise Exception("Not implemented yet")
+        return State(self.startLocation)
+
         # END_YOUR_CODE
 
     def isEnd(self, state: State) -> bool:
         # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
-        raise Exception("Not implemented yet")
+        return True if self.endTag in self.cityMap.tags[state.location] else False
         # END_YOUR_CODE
 
     def actionSuccessorsAndCosts(self, state: State) -> List[Tuple[str, State, float]]:
         """
         Note we want to return a list of *3-tuples* of the form:
             (actionToReachSuccessor: str, successorState: State, cost: float)
-        Our action space is the set of all named locations, where a named location 
+        Our action space is the set of all named locations, where a named location
         string represents a transition from the current location to that new location.
         """
         # BEGIN_YOUR_CODE (our solution is 7 lines of code, but don't worry if you deviate from this)
-        raise Exception("Not implemented yet")
+        result = []
+        for label2, distance in self.cityMap.distances[state.location].items():
+            result.append((label2, State(label2), distance))
+
+        return result
         # END_YOUR_CODE
 
 
@@ -63,7 +69,7 @@ class ShortestPathProblem(SearchProblem):
 def getStanfordShortestPathProblem() -> ShortestPathProblem:
     """
     Create your own search problem using the map of Stanford, specifying your own
-    `startLocation`/`endTag`. 
+    `startLocation`/`endTag`.
 
     Run `python mapUtil.py > readableStanfordMap.txt` to dump a file with a list of
     locations and associated tags; you might find it useful to search for the following
@@ -75,7 +81,9 @@ def getStanfordShortestPathProblem() -> ShortestPathProblem:
     cityMap = createStanfordMap()
 
     # BEGIN_YOUR_CODE (our solution is 2 lines of code, but don't worry if you deviate from this)
-    raise Exception("Not implemented yet")
+    startLocation=locationFromTag(makeTag("landmark", "evgr_a"), cityMap)
+    endTag=makeTag("amenity", "parking_entrance")
+    endLocation=locationFromTag(endTag, cityMap),
     # END_YOUR_CODE
     return ShortestPathProblem(startLocation, endTag, cityMap)
 
@@ -88,11 +96,11 @@ class WaypointsShortestPathProblem(SearchProblem):
     """
     Defines a search problem that corresponds to finding the shortest path from
     `startLocation` to any location with the specified `endTag` such that the path also
-    traverses locations that cover the set of tags in `waypointTags`. Note that tags 
+    traverses locations that cover the set of tags in `waypointTags`. Note that tags
     from the `startLocation` count towards covering the set of tags.
 
     Hint: naively, your `memory` representation could be a list of all locations visited.
-    However, that would be too large of a state space to search over! Think 
+    However, that would be too large of a state space to search over! Think
     carefully about what `memory` should represent.
     """
     def __init__(
@@ -107,6 +115,7 @@ class WaypointsShortestPathProblem(SearchProblem):
 
     def startState(self) -> State:
         # BEGIN_YOUR_CODE (our solution is 6 lines of code, but don't worry if you deviate from this)
+        # start state could be progress, can we maintain a state of startState
         raise Exception("Not implemented yet")
         # END_YOUR_CODE
 
@@ -127,7 +136,7 @@ class WaypointsShortestPathProblem(SearchProblem):
 
 def getStanfordWaypointsShortestPathProblem() -> WaypointsShortestPathProblem:
     """
-    Create your own search problem with waypoints using the map of Stanford, 
+    Create your own search problem with waypoints using the map of Stanford,
     specifying your own `startLocation`/`waypointTags`/`endTag`.
 
     Similar to Problem 2b, use `readableStanfordMap.txt` to identify potential
@@ -227,7 +236,7 @@ class NoWaypointsHeuristic(Heuristic):
             def isEnd(self, state: State) -> bool:
                 """
                 Return False for each state.
-                Because there is *not* a valid end state (`isEnd` always returns False), 
+                Because there is *not* a valid end state (`isEnd` always returns False),
                 UCS will exhaustively compute costs to *all* other states.
                 """
                 # BEGIN_YOUR_CODE (our solution is 1 line of code, but don't worry if you deviate from this)
@@ -237,8 +246,8 @@ class NoWaypointsHeuristic(Heuristic):
             def actionSuccessorsAndCosts(
                 self, state: State
             ) -> List[Tuple[str, State, float]]:
-                # If current location is the special "END" state, 
-                # return all the locations with the desired endTag and cost 0 
+                # If current location is the special "END" state,
+                # return all the locations with the desired endTag and cost 0
                 # (i.e, we connect the special location "END" with cost 0 to all locations with endTag)
                 # Else, return all the successors of current location and their corresponding distances according to the cityMap
                 # BEGIN_YOUR_CODE (our solution is 14 lines of code, but don't worry if you deviate from this)
